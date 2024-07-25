@@ -19,6 +19,3 @@ $mode: ceil;
 @debug "decimal-round: #{utils.decimal-round($number, $digits, $mode)}";
 
 ```
-
-
-Test
