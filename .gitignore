@@ -8,3 +8,6 @@ test/*.css.map
 
 # Ignore node_modules
 node_modules/
+
+#Ignore tarball
+*.tgz
