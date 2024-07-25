@@ -1,0 +1,10 @@
+# Ignore IDE workspace
+.idea/
+.vscode/
+
+# Ignore all CSS files
+test/*.css
+test/*.css.map
+
+# Ignore node_modules
+node_modules/

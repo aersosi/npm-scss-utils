@@ -1,0 +1,48 @@
+{
+  "name": "@aersosi/scss-utils",
+  "version": "0.0.1",
+  "description": "NPM package for validating types of SCSS values",
+  "main": "index.scss",
+  "style": "index.scss",
+  "files": [
+    "index.scss",
+    "src/**"
+  ],
+  "scripts": {
+    "npm-cache": "npm cache clean --force",
+    "cleanup": "rm -rf node_modules/@aersosi/scss-utils && find . -maxdepth 1 -name '*.tgz' -delete",
+    "pretty": "npx prettier ./src ./test --write",
+    "build-install": "npm pack && npm i --no-save $(ls -t *.tgz | head -1)",
+    "test": "sass --load-path=node_modules test/test.scss test/test.css --watch",
+    "npm-publish": "npm publish --access=public --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aersosi/npm-scss-utils.git"
+  },
+  "keywords": [
+    "npm",
+    "sass",
+    "scss",
+    "styles",
+    "test",
+    "type",
+    "typecheck",
+    "types",
+    "validate",
+    "round",
+    "decimal"
+  ],
+  "author": "Arthur Ersosi",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/aersosi/npm-scss-utils/issues"
+  },
+  "homepage": "https://github.com/aersosi/npm-scss-utils#readme",
+  "dependencies": {
+    "sass": "^1.77.8"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3"
+  }
+}

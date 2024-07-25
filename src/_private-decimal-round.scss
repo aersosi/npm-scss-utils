@@ -1,0 +1,35 @@
+@use "private-scss-type-check" as tc;
+
+@function decimal-round($number, $digits: 0, $mode: round) {
+  // $number must be a number
+  $number: tc.is-number($number, "number");
+
+  // $digits must be a unitless number
+  $digits: tc.is-unitless-number($digits, "digits");
+
+  // Validate $mode is a string
+  $mode: tc.is-string($mode, "mode");
+
+  // Validate $mode is one of the allowed values
+  @if not($mode == "round" or $mode == "ceil" or $mode == "floor") {
+    @warn 'Invalid $mode: expected "round", "ceil", or "floor"';
+  }
+
+  $n: 1;
+
+  @if $digits > 0 {
+    @for $i from 1 through $digits {
+      $n: $n * 10;
+    }
+  }
+
+  @if $mode == round {
+    @return calc(round($number * $n) / $n);
+  } @else if $mode == ceil {
+    @return calc(ceil($number * $n) / $n);
+  } @else if $mode == floor {
+    @return calc(floor($number * $n) / $n);
+  } @else {
+    @return $number;
+  }
+}

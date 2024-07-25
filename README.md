@@ -1,2 +1,2 @@
 # npm-scss-utils
-NPM package containing my SCSS utils
+NPM package for validating types of SCSS value
