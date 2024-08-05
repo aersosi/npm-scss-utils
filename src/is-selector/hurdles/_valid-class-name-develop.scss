@@ -1,0 +1,143 @@
+$class-part-until: (" ", ".", "#", ":", ">", "+", "~", "*" );
+$class-part-attr: ("[", "]");
+$class-part-function: ("(", ")");
+$letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+$numbers: '0123456789';
+$special: '-_\\';
+$all-allowed-chars: $letters + $numbers + $special;
+
+$ascii-chars: $letters + $numbers +'!@#$%^&*()_+-=[]{};\\:"|,./<>? ';
+
+
+@function is-allowed($char) {
+  @return str-index($all-allowed-chars, $char) != null;
+}
+
+@function only-allowed-characters($string) {
+  @for $i from 1 through str-length($string) {
+    $char: str-slice($string, $i, $i);
+    @if not is-allowed($char) {
+      @return false;
+    }
+  }
+  @return true;
+}
+
+@function contains-non-ascii($string) {
+  @for $i from 1 through str-length($string) {
+    $char: str-slice($string, $i, $i);
+    @if str-index($ascii-chars, $char) == null {
+      @return true;
+    }
+  }
+  @return false;
+}
+
+//@function str-last-index($string, $substring) {
+//  $index: null;
+//  $length: str-length($string);
+//  $sublength: str-length($substring);
+//
+//  @for $i from $length - $sublength + 1 through 1 {
+//    @if str-slice($string, $i, $i + $sublength - 1) == $substring {
+//      $index: $i;
+//    }
+//  }
+//  @return $index;
+//}
+
+.test> {
+
+}
+
+
+@function is-ok-class-name($string) {
+  $original-string: $string;
+
+  // remove "." at beginning
+  @if str-index($string, ".") == 1 {
+    $string: str-slice($string, 2);
+  } @else {
+    @return null;
+  }
+
+  // class name must consist of one or more characters
+  @if str-length($string) == 0 {
+    @warn "Selector bust be at least one character long";
+    @return null;
+  }
+
+
+  // Check if first char is a digit
+  @if str-index($numbers, str-slice($string, 1, 1)) {
+    @warn "First character in class-name cannot be a digit.";
+    @return null;
+  }
+
+  @if only-allowed-characters($string) == false {
+    @warn 'Not allowed characters in class name.';
+    @return null;
+  }
+
+  // todo: get regex from sass parser parsel to match .class, put into regex explain use this
+  // todo: explain to get rules for .class matching
+
+  // Slice $string at the first occurrence of
+  // any character present in $class-part-until
+  // todo: .cla[ss[] -> should find index of the second occurence of "["
+  @each $entry in $class-part-until {
+    $char-index: str-index($string, $entry);
+
+    @if $char-index != null {
+      $string: str-slice($string, 0, $char-index - 1);
+    }
+  }
+
+  @debug $string;
+
+
+
+
+  // return string if all is okay
+  @return $original-string;
+}
+
+//@debug str-last-index(".cla[ss[]", "[");
+
+
+// @debug is-ok-class-name(".class-name-11");
+
+// @debug is-ok-class-name("class"); // ok, null
+// @debug is-ok-class-name(".1class"); // ok, Warn, null
+
+// @debug is-ok-class-name(".class[]"); // cannot be empty? test separate in attr testing
+@debug is-ok-class-name(".cla[ss[]"); // wrong, in between no ".", "#", "["
+// @debug is-ok-class-name(".cl[ass"); // ok Warn, null
+
+// @debug is-ok-class-name(".class()"); // cannot be empty?
+// @debug is-ok-class-name(".cla(ss()"); // wrong, in between no ".", "#", "["
+// @debug is-ok-class-name(".cl(ass"); // ok Warn, null
+
+// @debug is-ok-class-name(".class.class"); // should @return $string (for complex selector check)
+// @debug is-ok-class-name(".class .class"); // should @return $string (for complex selector check)
+// @debug is-ok-class-name(".class,.class"); // should @return $string (for complex selector check)
+
+// @debug is-ok-class-name(".cl@ss:hover"); // not ok, should warn about the special character @
+
+
+//- A CSS class selector must start with a period (.).
+//- After the period, the class name must consist of one or more characters.
+//    The characters allowed in a class name are:
+//    Lowercase letters (a-z)
+//    Uppercase letters (A-Z)
+//    Digits (0-9)
+//    Hyphens (-)
+//    Underscores (_)
+//    Any non-ASCII characters (e.g., é, ñ, 漢, etc.) todo: account for non ascii characters
+//
+//- The class name can be of any length, as long as it contains at least one character.
+//- The class name can't contain spaces or any other punctuation marks besides hyphens and underscores.
+//- The class name can start with a letter, underscore, hyphen, or non-ASCII character.
+//- The class name is case-sensitive.
+//- There's no restriction on using numbers within the class name, including at the beginning (although starting with a number isn't recommended for compatibility reasons).
+//                                                                                                                                                                       Non-ASCII characters are fully supported, allowing for internationalized class names.
