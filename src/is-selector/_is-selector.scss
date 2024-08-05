@@ -1,0 +1,78 @@
+@use "../scss-type-check/scss-type-check" as tc;
+@use "hurdles/index" as hu;
+
+// todo: for complex selectors/combinators split the string at " " and test each part separately
+
+@function is-selector($selector) {
+  //////// Basic tests
+
+  // Validate $selector is a string
+  @if tc.is-string($selector, "selector") == null {
+    @return null;
+  }
+
+  // Check if you actually put something in
+  @if str-length($selector) == 0 {
+    @return null;
+  }
+
+  // Validate $selector contains only valid characters
+  @if hu.is-valid-characters($selector, "selector") == null {
+    @return null;
+  }
+
+  //////// Optimistic tests
+
+  // Validate $selector length is 1 and is valid single-char selectors
+  @if hu.is-single-char-selector($selector, "selector") == $selector {
+    @return $selector;
+  }
+  // Validate $selector is valid html-tag
+  @if hu.is-html-tag($selector, "selector") == $selector {
+    @return $selector;
+  }
+
+
+
+
+
+
+
+
+
+
+  //////// Pessimistic tests
+
+  //// Validate $selector length is 1 and is valid single-char selectors
+  //@if hu.is-single-char-selector($selector, "selector") == null {
+  //  @return null;
+  //}
+  //
+  //// Validate $selector is valid html-tag
+  //@if hu.is-html-tag($selector, "selector") == null {
+  //  @return null;
+  //}
+
+
+  // =====================
+  // Finish
+  @return $selector;
+}
+
+// todo: attribute selectors
+// todo: check pseudo-class && pseudo-element
+// todo: has comma or combinator or space in between? if something else -> null
+
+//@debug is-selector(true); // null
+//@debug is-selector(''); // null
+//@debug is-selector('invalid!selector'); // null
+//@debug is-selector('foo'); // null
+
+@debug is-selector('a'); // true
+@debug is-selector('['); // true
+//@debug is-selector('.valid-selector123'); // true
+
+
+.test{
+
+}

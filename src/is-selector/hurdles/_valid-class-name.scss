@@ -1,0 +1,93 @@
+$class-part-until: (" ", ".", "#", ":", ">", "+", "~", "*" );
+$class-part-attr: ("[", "]");
+$class-part-function: ("(", ")");
+$letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+$numbers: '0123456789';
+$special: '-_';
+$all-allowed-chars: $letters + $numbers + $special;
+
+
+@function test-string($string) {
+  // 2. Check if first char is "."
+  @if str-slice($string, 1, 1) != "." {
+    @return null;
+  }
+
+  // 3. Check if second char is a digit
+  @if str-index($numbers, str-slice($string, 2, 2)) {
+    @warn "Second character cannot be a digit.";
+    @return null;
+  }
+
+  // 4. Check for matching brackets
+  $open-bracket: str-index($string, "[");
+  $close-bracket: str-index($string, "]");
+  @if $open-bracket and $close-bracket {
+    @if $open-bracket > $close-bracket {
+      @warn "Mismatched brackets.";
+      @return null;
+    }
+  } @else if ($open-bracket and not $close-bracket) or (not $open-bracket and $close-bracket) {
+    @warn "Mismatched brackets.";
+    @return null;
+  }
+
+  // 5. Check for matching parentheses
+  $open-paren: str-index($string, "(");
+  $close-paren: str-index($string, ")");
+  @if $open-paren and $close-paren {
+    @if $open-paren > $close-paren {
+      @warn "Mismatched parentheses.";
+      @return null;
+    }
+  } @else if ($open-paren and not $close-paren) or (not $open-paren and $close-paren) {
+    @warn "Mismatched parentheses.";
+    @return null;
+  }
+
+  // 6. Find first occurrence of $class-part-until inside of $string
+  $cut-index: str-length($string) + 1;
+  @each $part in $class-part-until {
+    $index: str-index($string, $part);
+    @if $index and $index < $cut-index {
+      $cut-index: $index;
+    }
+  }
+
+  // Check if the class part contains only allowed characters
+  $class-part: str-slice($string, 2, $cut-index - 1);
+  @for $i from 1 through str-length($class-part) {
+    $char: str-slice($class-part, $i, $i);
+    @if str-index($all-allowed-chars, $char) == null {
+      @warn "Invalid character '#{$char}' in class name.";
+      @return null;
+    }
+  }
+
+  // 7. Return the string
+  @return str-slice($string, 1, $cut-index - 1);
+
+
+  // @return $string;
+}
+
+// CLAUDE
+
+// @debug test-string("class"); // ok, null
+// @debug test-string(".1class"); // ok, Warn, null
+
+// @debug test-string(".class[]"); // cannot be empty?
+// @debug test-string(".cla[ss[]"); // wrong, in between no ".", "#", "["
+// @debug test-string(".cl[ass"); // ok Warn, null
+
+// @debug test-string(".class()"); // cannot be empty?
+// @debug test-string(".cla(ss()"); // wrong, in between no ".", "#", "["
+// @debug test-string(".cl(ass"); // ok Warn, null
+
+// @debug test-string(".class.class"); // should @return $string (for complex selector check)
+// @debug test-string(".class .class"); // should @return $string (for complex selector check)
+// @debug test-string(".class,.class"); // should @return $string (for complex selector check)
+
+@debug test-string(".cl@ss:hover"); // not ok, should warn about the special character @
+
+

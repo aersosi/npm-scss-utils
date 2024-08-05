@@ -1,0 +1,32 @@
+// This mixin creates a flex layout that changes from a column layout
+// to a row layout at a specified breakpoint.
+
+// @example
+//  $breakpoints-map: (xs : 480px, sm: 640px)
+//  @include flex-stack(v.$breakpoints-map);
+
+@mixin flex-stack(
+  $breakpoints: (
+    480: 480px,
+    640: 640px,
+    768: 768px,
+    1024: 1024px,
+    1280: 1280px,
+    1440: 1440px,
+    1920: 1920px,
+  )
+) {
+  // Apply flex to all elements that include "flex-stack"
+  [class*='flex-stack'] {
+    display: flex;
+  }
+
+  @each $breakpoint-name, $breakpoint-size in $breakpoints {
+    .#{$breakpoint-name}\:flex-stack {
+      flex-direction: column;
+      @media (min-width: $breakpoint-size) {
+        flex-direction: row;
+      }
+    }
+  }
+}

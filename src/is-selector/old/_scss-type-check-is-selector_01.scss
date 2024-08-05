@@ -1,0 +1,184 @@
+@function is-selector($selector) {
+  $letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $numbers: '0123456789';
+  $any: '*';
+  $classID: '.#';
+  $commaSpace: ', ';
+  $attribute: '[]="\'>+~^$|';
+  $special: ':()-_';
+  $allSpecial: $any + $classID + $commaSpace + $attribute + $special;
+  $single-char: $letters + $any;
+  $all-char: $letters + $numbers + $allSpecial;
+
+  // check if you actually put something in
+  @if str-length($selector) == 0 {
+    @return false ;
+  }
+
+  // check if it is a string
+  @if type-of($selector) != 'string' {
+    @return false ;
+  }
+
+  // check if single character selector (e.g. * or a)
+  @if str-length($selector) == 1 and str-index($single-char, $selector) == null {
+    @return false ;
+  }
+
+  // check if first character is number
+  @if str-index($numbers, str-slice($selector, 1, 1)) {
+    @return false ;
+  }
+
+  // check if class or ID, followed by number
+  $firstChar: str-slice($selector, 1, 1);
+  $secondChar: str-slice($selector, 2, 2);
+  @if ($firstChar == '.' or $firstChar == '#') and str-index($numbers, $secondChar) {
+    @return false ;
+  }
+
+  // check if two hyphens at start
+  @if str-index('-', str-slice($selector, 1, 1)) and str-index('-', str-slice($selector, 2, 2)) {
+    @return false ;
+  }
+
+  // check if a hyphen followed by a digit
+  @if str-index('-', str-slice($selector, 1, 1)) and str-index($numbers, str-slice($selector, 2, 2))
+  {
+    @return false ;
+  }
+
+  // todo: check if . followed by # or [
+
+  // check if only allowed characters
+  @for $i from 1 through str-length($selector) {
+    $char: str-slice($selector, $i, $i);
+    $found: str-index($all-char, $char);
+    @if ($found == null) {
+      @return false ;
+    }
+  }
+  @return true ;
+}
+
+ //https://www.w3.org/TR/CSS21/selector.html#pattern-matching
+
+//@function is-selector($value) {
+//  @if not selector-parse($value) {
+//    @warn '(#{ $value }) is not a valid css selector.';
+//    @return null;
+//  }
+//  @return $value;
+//}
+//
+//$validity-check2: is-selector('.example 1');
+//
+//.test2 {
+//  content: #{$validity-check2};
+//}
+
+
+// Universal selector
+@debug is-selector('*');  // true 
+
+// Type selector
+@debug is-selector('div');  // true 
+
+// Class selector
+@debug is-selector('.warning');  // true 
+
+// ID selector
+@debug is-selector('#myid');  // true 
+
+@debug "=======================";
+
+// Attribute selectors
+@debug is-selector('[foo]');  // true todo: false
+@debug is-selector('[foo="bar"]');  // true 
+@debug is-selector('[foo~="bar"]');  // true 
+@debug is-selector('[foo^="bar"]');  // true 
+@debug is-selector('[foo$="bar"]');  // true 
+@debug is-selector('[foo*="bar"]');  // true 
+@debug is-selector('[foo|="en"]');  // true 
+
+@debug "=======================";
+
+// Pseudo-classes
+@debug is-selector(':not(s1, s2)');  // true todo: false
+@debug is-selector(':is(s1, s2)');  // true todo: false
+@debug is-selector(':where(s1, s2)');  // true todo: false
+@debug is-selector(':has(rs1, rs2)');  // true todo: false
+@debug is-selector(':dir(ltr)');  // true 
+@debug is-selector(':lang(zh, "*-hant")');  // true todo: false
+@debug is-selector(':any-link');  // true 
+@debug is-selector(':link');  // true 
+@debug is-selector(':visited');  // true 
+@debug is-selector(':local-link');  // true 
+@debug is-selector(':target');  // true 
+@debug is-selector(':target-within');  // true 
+@debug is-selector(':scope');  // true 
+@debug is-selector(':current');  // true 
+@debug is-selector(':past');  // true 
+@debug is-selector(':future');  // true 
+@debug is-selector(':active');  // true 
+@debug is-selector(':hover');  // true 
+@debug is-selector(':focus');  // true 
+@debug is-selector(':focus-within');  // true 
+@debug is-selector(':focus-visible');  // true 
+@debug is-selector(':enabled');  // true 
+@debug is-selector(':disabled');  // true 
+@debug is-selector(':read-write');  // true 
+@debug is-selector(':read-only');  // true 
+@debug is-selector(':placeholder-shown');  // true 
+@debug is-selector(':default');  // true 
+@debug is-selector(':checked');  // true 
+@debug is-selector(':indeterminate');  // true 
+@debug is-selector(':valid');  // true 
+@debug is-selector(':invalid');  // true 
+@debug is-selector(':in-range');  // true 
+@debug is-selector(':out-of-range');  // true 
+@debug is-selector(':required');  // true 
+@debug is-selector(':optional');  // true 
+@debug is-selector(':blank');  // true 
+@debug is-selector(':user-invalid');  // true 
+@debug is-selector(':root');  // true 
+@debug is-selector(':empty');  // true 
+@debug is-selector(':nth-child(2n+1)');  // true  todo: false
+@debug is-selector(':nth-last-child(odd)');  // true 
+@debug is-selector(':first-child');  // true 
+@debug is-selector(':last-child');  // true 
+@debug is-selector(':only-child');  // true 
+@debug is-selector(':nth-of-type(2n)');  // true 
+@debug is-selector(':nth-last-of-type(even)');  // true 
+@debug is-selector(':first-of-type');  // true 
+@debug is-selector(':last-of-type');  // true 
+@debug is-selector(':only-of-type');  // true 
+
+@debug "=======================";
+
+// Combinators
+@debug is-selector('E F');  // true 
+@debug is-selector('E > F');  // true todo: false
+@debug is-selector('E + F');  // true todo: false
+@debug is-selector('E ~ F');  // true todo: false
+@debug is-selector('F || E');  // true todo: false
+
+@debug "=======================";
+
+
+// Column pseudo-classes
+@debug is-selector(':nth-col(3n+1)');  // true todo: false
+@debug is-selector(':nth-last-col(2n)');  // true 
+
+@debug "=======================";
+
+
+// Complex selectors
+@debug is-selector('div.class#id[attr="value"]:hover::before');  // true todo: false
+
+@debug "=======================";
+
+// Invalid selectors
+@debug is-selector('123invalid');  // false 
+@debug is-selector('.123invalid');  // false 
+@debug is-selector('invalid!');  // false 

@@ -1,0 +1,39 @@
+@use 'variables' as v;
+@use '../typography-fluid/functions' as f;
+
+// mat-icon default size 24px
+@mixin icon-scale-fluid(
+  $steps: (
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+  ),
+  $distance: 4,
+  $browser-min: 640,
+  $browser-max: 1440,
+  $break-points: v.$break-points
+) {
+  @each $br in $break-points {
+    @each $step in $steps {
+      $to: $step + $distance;
+      .icon-fluid-#{$step}-#{$to} {
+        --scale: #{f.clamp-size($browser-min, $browser-max, $step, $to)};
+      }
+    }
+  }
+
+  @each $br, $val in $break-points {
+    @media (min-width: #{$val}px) {
+      @each $step in $steps {
+        $to: $step + $distance;
+        .#{$br}\:icon-fluid-#{$step}-#{$to} {
+          --scale: #{f.clamp-size($browser-min, $browser-max, $step, $to)};
+        }
+      }
+    }
+  }
+}

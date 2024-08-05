@@ -1,0 +1,209 @@
+@function is-selector($selector) {
+  $letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $numbers: '0123456789';
+  $any: '*';
+  $classID: '.#';
+  $commaSpace: ', ';
+  $attribute: '[]="\'>+~^$|';
+  $special: ':()-_';
+  $allSpecial: $any + $classID + $commaSpace + $attribute + $special;
+  $single-char: $letters + $any;
+  $all-char: $letters + $numbers + $allSpecial;
+
+  // Check if you actually put something in
+  @if str-length($selector) == 0 {
+    @return false ;
+  }
+
+  // Check if it is a string
+  @if type-of($selector) != 'string' {
+    @return false ;
+  }
+
+  // Split the selector into parts
+  $parts: str-split($selector, ' ');
+
+  @each $part in $parts {
+    // Check each part of the selector
+    @if not is-valid-selector-part($part, $letters, $numbers, $any, $classID, $attribute, $special) {
+      @return false ;
+    }
+  }
+
+  @return true ;
+}
+
+@function is-valid-selector-part($part, $letters, $numbers, $any, $classID, $attribute, $special) {
+  $first-char: str-slice($part, 1, 1);
+
+  // Check if single character selector (e.g. * or a)
+  @if str-length($part) == 1 {
+    @return str-index($letters + $any, $first-char) != null;
+  }
+
+  // Check if first character is number
+  @if str-index($numbers, $first-char) {
+    @return false ;
+  }
+
+  // Check if class or ID
+  @if str-index($classID, $first-char) {
+    $second-char: str-slice($part, 2, 2);
+    @if str-index($numbers, $second-char) {
+      @return false ;
+    }
+    @return is-valid-identifier(str-slice($part, 2), $letters, $numbers, $special);
+  }
+
+  // Check if attribute selector
+  @if $first-char == '[' {
+    @return str-slice($part, -1) == ']' and str-index($part, '=') != null;
+  }
+
+  // Check if pseudo-class or pseudo-element
+  @if $first-char == ':' {
+    $second-char: str-slice($part, 2, 2);
+    @if $second-char == ':' {
+      @return is-valid-identifier(str-slice($part, 3), $letters, $numbers, $special);
+    } @else {
+      @return is-valid-identifier(str-slice($part, 2), $letters, $numbers, $special);
+    }
+  }
+
+  // Check if it's a valid element name
+  @return is-valid-identifier($part, $letters, $numbers, $special);
+}
+
+@function is-valid-identifier($str, $letters, $numbers, $special) {
+  $first-char: str-slice($str, 1, 1);
+  @if not str-index($letters, $first-char) {
+    @return false ;
+  }
+  @for $i from 2 through str-length($str) {
+    $char: str-slice($str, $i, $i);
+    @if not str-index($letters + $numbers + $special, $char) {
+      @return false ;
+    }
+  }
+  @return true ;
+}
+
+@function str-split($string, $separator) {
+  $split-arr: ();
+  $index : str-index($string, $separator);
+  @while $index != null {
+    $item: str-slice($string, 1, $index - 1);
+    $split-arr: append($split-arr, $item);
+    $string: str-slice($string, $index + str-length($separator));
+    $index : str-index($string, $separator);
+  }
+  $split-arr: append($split-arr, $string);
+
+  @return $split-arr;
+}
+
+
+// Universal selector
+@debug is-selector('*');  // true 
+
+// Type selector
+@debug is-selector('div');  // true 
+
+// Class selector
+@debug is-selector('.warning');  // true 
+
+// ID selector
+@debug is-selector('#myid');  // true 
+
+@debug "=======================";
+
+// Attribute selectors
+@debug is-selector('[foo]');  // true todo: false
+@debug is-selector('[foo="bar"]');  // true 
+@debug is-selector('[foo~="bar"]');  // true 
+@debug is-selector('[foo^="bar"]');  // true 
+@debug is-selector('[foo$="bar"]');  // true 
+@debug is-selector('[foo*="bar"]');  // true 
+@debug is-selector('[foo|="en"]');  // true 
+
+@debug "=======================";
+
+// Pseudo-classes
+@debug is-selector(':not(s1, s2)');  // true todo: false
+@debug is-selector(':is(s1, s2)');  // true todo: false
+@debug is-selector(':where(s1, s2)');  // true todo: false
+@debug is-selector(':has(rs1, rs2)');  // true todo: false
+@debug is-selector(':dir(ltr)');  // true 
+@debug is-selector(':lang(zh, "*-hant")');  // true todo: false
+@debug is-selector(':any-link');  // true 
+@debug is-selector(':link');  // true 
+@debug is-selector(':visited');  // true 
+@debug is-selector(':local-link');  // true 
+@debug is-selector(':target');  // true 
+@debug is-selector(':target-within');  // true 
+@debug is-selector(':scope');  // true 
+@debug is-selector(':current');  // true 
+@debug is-selector(':past');  // true 
+@debug is-selector(':future');  // true 
+@debug is-selector(':active');  // true 
+@debug is-selector(':hover');  // true 
+@debug is-selector(':focus');  // true 
+@debug is-selector(':focus-within');  // true 
+@debug is-selector(':focus-visible');  // true 
+@debug is-selector(':enabled');  // true 
+@debug is-selector(':disabled');  // true 
+@debug is-selector(':read-write');  // true 
+@debug is-selector(':read-only');  // true 
+@debug is-selector(':placeholder-shown');  // true 
+@debug is-selector(':default');  // true 
+@debug is-selector(':checked');  // true 
+@debug is-selector(':indeterminate');  // true 
+@debug is-selector(':valid');  // true 
+@debug is-selector(':invalid');  // true 
+@debug is-selector(':in-range');  // true 
+@debug is-selector(':out-of-range');  // true 
+@debug is-selector(':required');  // true 
+@debug is-selector(':optional');  // true 
+@debug is-selector(':blank');  // true 
+@debug is-selector(':user-invalid');  // true 
+@debug is-selector(':root');  // true 
+@debug is-selector(':empty');  // true 
+@debug is-selector(':nth-child(2n+1)');  // true  todo: false
+@debug is-selector(':nth-last-child(odd)');  // true 
+@debug is-selector(':first-child');  // true 
+@debug is-selector(':last-child');  // true 
+@debug is-selector(':only-child');  // true 
+@debug is-selector(':nth-of-type(2n)');  // true 
+@debug is-selector(':nth-last-of-type(even)');  // true 
+@debug is-selector(':first-of-type');  // true 
+@debug is-selector(':last-of-type');  // true 
+@debug is-selector(':only-of-type');  // true 
+
+@debug "=======================";
+
+// Combinators
+@debug is-selector('E F');  // true 
+@debug is-selector('E > F');  // true todo: false
+@debug is-selector('E + F');  // true todo: false
+@debug is-selector('E ~ F');  // true todo: false
+@debug is-selector('F || E');  // true todo: false
+
+@debug "=======================";
+
+
+// Column pseudo-classes
+@debug is-selector(':nth-col(3n+1)');  // true todo: false
+@debug is-selector(':nth-last-col(2n)');  // true 
+
+@debug "=======================";
+
+
+// Complex selectors
+@debug is-selector('div.class#id[attr="value"]:hover::before');  // true todo: false
+
+@debug "=======================";
+
+// Invalid selectors
+@debug is-selector('123invalid');  // false 
+@debug is-selector('.123invalid');  // false 
+@debug is-selector('invalid!');  // false 

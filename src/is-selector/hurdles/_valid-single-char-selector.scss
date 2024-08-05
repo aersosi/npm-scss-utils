@@ -1,0 +1,21 @@
+$single-char-selector-list: ("*", "a", "b", "i", "p", "q", "s", "u");
+
+@function is-single-char-selector($string, $name: "value") {
+  $string-length: str-length($string);
+
+  @if $string-length == 2 {
+    @return $string;
+  }
+
+  @if $string-length == 1 {
+    @if index($single-char-selector-list, $string) {
+      @return $string;
+    } @else {
+      @warn '#{$name} (#{$string}) is not a valid single-character selector.';
+      @return null;
+    }
+  }
+
+  @warn "#{$string} is not a valid selector (must be 1 or 2 characters long).";
+  @return null;
+}

@@ -1,0 +1,31 @@
+@use 'variables' as v;
+
+// mat-icon default size 24px
+@mixin icon-scale-static(
+  $scales: (
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+  ),
+  $break-points: v.$break-points
+) {
+  @each $scale in $scales {
+    .icon-scale-#{$scale} {
+      --scale: #{$scale}px;
+    }
+  }
+
+  @each $key, $val in $break-points {
+    @media (min-width: #{$val}px) {
+      @each $scale in $scales {
+        .#{$key}\:icon-scale-#{$scale} {
+          --scale: #{$scale}px;
+        }
+      }
+    }
+  }
+}

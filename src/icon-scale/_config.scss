@@ -1,0 +1,14 @@
+@forward 'icon_scale_static';
+@forward 'icon_scale_fluid';
+
+[class*='icon-fluid'],
+[class*='icon-scale'] {
+  --scale: 24px; // default
+  width: var(--scale) !important;
+  height: var(--scale) !important;
+
+  // prevent font-size on svg-icons to move icon down
+  &:not([data-mat-icon-type='svg']) {
+    font-size: var(--scale) !important;
+  }
+}

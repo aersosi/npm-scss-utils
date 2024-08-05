@@ -1,0 +1,99 @@
+@use 'is-selector' as *;
+
+
+// Universal selector
+@debug is-selector('*') '*';
+
+// Tag selector
+@debug is-selector('div') 'div';
+
+// Class selector
+@debug is-selector('.warning') '.warning';
+
+// ID selector
+@debug is-selector('#myid') '#myid';
+
+.test {
+
+}
+
+// Attribute selectors
+@debug is-selector('[foo]') '[foo]';
+@debug is-selector('[foo="bar"]') '[foo="bar"]';
+@debug is-selector('[foo~="bar"]') '[foo~="bar"]';
+@debug is-selector('[foo^="bar"]') '[foo^="bar"]';
+@debug is-selector('[foo$="bar"]') '[foo$="bar"]';
+@debug is-selector('[foo*="bar"]') '[foo*="bar"]';
+@debug is-selector('[foo|="en"]') '[foo|="en"]';
+
+// Pseudo-classes
+@debug is-selector(':not(s1, s2)') ':not(s1, s2)';
+@debug is-selector(':is(s1, s2)') ':is(s1, s2)';
+@debug is-selector(':where(s1, s2)') ':where(s1, s2)';
+@debug is-selector(':has(rs1, rs2)') ':has(rs1, rs2)';
+@debug is-selector(':dir(ltr)') ':dir(ltr)';
+@debug is-selector(':lang(zh, "*-hant")') ':lang(zh, "*-hant")';
+@debug is-selector(':any-link') ':any-link';
+@debug is-selector(':link') ':link';
+@debug is-selector(':visited') ':visited';
+@debug is-selector(':local-link') ':local-link';
+@debug is-selector(':target') ':target';
+@debug is-selector(':target-within') ':target-within';
+@debug is-selector(':scope') ':scope';
+@debug is-selector(':current') ':current';
+@debug is-selector(':past') ':past';
+@debug is-selector(':future') ':future';
+@debug is-selector(':active') ':active';
+@debug is-selector(':hover') ':hover';
+@debug is-selector(':focus') ':focus';
+@debug is-selector(':focus-within') ':focus-within';
+@debug is-selector(':focus-visible') ':focus-visible';
+@debug is-selector(':enabled') ':enabled';
+@debug is-selector(':disabled') ':disabled';
+@debug is-selector(':read-write') ':read-write';
+@debug is-selector(':read-only') ':read-only';
+@debug is-selector(':placeholder-shown') ':placeholder-shown';
+@debug is-selector(':default') ':default';
+@debug is-selector(':checked') ':checked';
+@debug is-selector(':indeterminate') ':indeterminate';
+@debug is-selector(':valid') ':valid';
+@debug is-selector(':invalid') ':invalid';
+@debug is-selector(':in-range') ':in-range';
+@debug is-selector(':out-of-range') ':out-of-range';
+@debug is-selector(':required') ':required';
+@debug is-selector(':optional') ':optional';
+@debug is-selector(':blank') ':blank';
+@debug is-selector(':user-invalid') ':user-invalid';
+@debug is-selector(':root') ':root';
+@debug is-selector(':empty') ':empty';
+@debug is-selector(':nth-child(2n+1)') ':nth-child(2n+1)';
+@debug is-selector(':nth-last-child(odd)') ':nth-last-child(odd)';
+@debug is-selector(':first-child') ':first-child';
+@debug is-selector(':last-child') ':last-child';
+@debug is-selector(':only-child') ':only-child';
+@debug is-selector(':nth-of-type(2n)') ':nth-of-type(2n)';
+@debug is-selector(':nth-last-of-type(even)') ':nth-last-of-type(even)';
+@debug is-selector(':first-of-type') ':first-of-type';
+@debug is-selector(':last-of-type') ':last-of-type';
+@debug is-selector(':only-of-type') ':only-of-type';
+
+// Combinators
+@debug is-selector('E F') 'E F';
+@debug is-selector('E > F') 'E > F';
+@debug is-selector('E + F') 'E + F';
+@debug is-selector('E ~ F') 'E ~ F';
+@debug is-selector('F || E') 'F || E';
+
+// Column pseudo-classes
+@debug is-selector(':nth-col(3n+1)') ':nth-col(3n+1)';
+@debug is-selector(':nth-last-col(2n)') ':nth-last-col(2n)';
+
+// Complex selectors
+@debug is-selector('div.class#id[attr="value"]:hover::before') 'div.class#id[attr="value"]:hover::before';
+
+@debug "=======================";
+
+// Invalid selectors
+@debug is-selector('123invalid') '123invalid';
+@debug is-selector('.123invalid') '.123invalid';
+@debug is-selector('invalid!') 'invalid!';

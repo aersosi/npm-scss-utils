@@ -73,3 +73,12 @@
   }
   @return false;
 }
+
+@function has-css-unit($value, $name: "value") {
+  @if unit($value) == "" {
+    @warn "#{$name} (#{$value}) does not contain a CSS unit.";
+    @return null;
+  }
+
+  @return $value;
+}

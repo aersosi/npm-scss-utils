@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "npm-cache": "npm cache clean --force",
-    "cleanup": "rm -rf node_modules/@aersosi/scss-utils && find . -maxdepth 1 -name '*.tgz' -delete",
+    "clean-up": "rm -rf node_modules/@aersosi/scss-utils && find . -maxdepth 1 -name '*.tgz' -delete",
     "pretty": "npx prettier ./src ./test --write",
     "build-install": "npm pack && npm i --no-save $(ls -t *.tgz | head -1)",
     "test": "sass --load-path=node_modules test/test.scss test/test.css --watch",

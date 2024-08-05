@@ -1,0 +1,42 @@
+// The .mat-mdc-form-field-infix element in each mat-mdc-form-field
+// determines the min-width of the form-field. Sometimes we need to change this
+// min-width.
+
+// material default infix-width: 120px
+
+// @mixin form-field-min-width();
+
+// @description
+// Adjusts the minimum width of the `.mat-mdc-form-field-infix` element within `mat-mdc-form-field` components.
+// This mixin allows for the application of customized minimum widths to form fields,
+// overriding the default material design width oft 120px.
+// This can be especially useful in responsive designs or when specific form fields require a narrower
+// or width than the material design default.
+
+// @param $widths [List] - A list of widths (in pixels) to be applied as minimum widths to the form field.
+// Each width in the list generates a corresponding CSS class `.min-width-<width>`,
+// which can be applied to a form field to set its minimum width.
+
+// @example
+//   @include form-field-min-width((60, 70, 80, 90, 100, 110));
+//   // Generates classes .min-width-60, .min-width-70, ... .min-width-110
+//   // These classes can be applied to mat-mdc-form-field elements to set their minimum width.
+
+@mixin form-field-min-width(
+  $widths: (
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+  )
+) {
+  @each $width in $widths {
+    .min-width-#{$width} {
+      &.mat-mdc-form-field-infix {
+        width: #{$width}px !important;
+      }
+    }
+  }
+}

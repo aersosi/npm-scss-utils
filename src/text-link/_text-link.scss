@@ -1,0 +1,45 @@
+@use '../scss-type-check/index' as tc;
+
+// @mixin text-link();
+
+// @description
+// Applies an animated hover underline effect to a link.
+
+// @param $color [Color] - The color of the underline.
+// Defaults to #ffc800. It accepts any CSS color value (e.g., hex, rgb, rgba, etc.).
+
+// @example
+//  a {
+//     @include text-link(); // Out of the box
+//  }
+
+//  p a.my-custom-class {
+//     @include text-link(#ffffff); // With a custom color
+//  }
+
+@mixin text-link($color: #ffc800) {
+  // $color must be a color
+  $color: tc.is-color($color, 'color');
+
+  color: $color;
+  font-weight: 500;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset-block-end: -2px;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    block-size: 2px;
+    background-color: $color;
+    transform-origin: bottom right;
+    transform: scaleX(0);
+    transition: transform 0.15s ease;
+  }
+
+  &:hover:before {
+    transform-origin: bottom left;
+    transform: scaleX(1);
+  }
+}

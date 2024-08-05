@@ -1,0 +1,18 @@
+@use "vars";
+
+@function is-html-tag($string, $name: "value") {
+  // Check if $string starts with any of the valid non-tag characters
+  @each $char in vars.$valid-not-tag-first-char {
+    @if str-slice($string, 1, str-length($char)) == $char {
+      @return $string;
+    }
+  }
+
+  // Check if $string is a valid HTML tag
+  @if not index(vars.$html-tags-list, $string) {
+    @warn '#{$name} (#{$string}) is not a valid html-tag.';
+    @return null;
+  }
+
+  @return $string;
+}

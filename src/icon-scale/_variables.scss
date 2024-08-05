@@ -1,0 +1,11 @@
+$break-points: (
+  'xs': 480,
+  'sm': 640,
+  'smd': 768,
+  'md': 1024,
+  'lg': 1440,
+  'xl': 1920,
+);
+
+$browser-min: 640;
+$browser-max: 1440;

@@ -1,0 +1,18 @@
+@use "vars" as vars;
+@use "../../scss-type-check/scss-type-check" as tc;
+
+$characters: vars.$valid-chars;
+
+@function is-valid-characters($string, $name: "value") {
+  $string: tc.is-string($string, "string");
+  $string-length: str-length($string);
+
+  @for $i from 1 through $string-length {
+    $char: str-slice($string, $i, $i);
+    @if str-index($characters, $char) == null {
+      @warn '#{ $name } (#{ $string }) contains invalid characters.';
+      @return null;
+    }
+  }
+  @return $string;
+}
